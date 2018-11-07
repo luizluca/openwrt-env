@@ -10,11 +10,13 @@ APPNAME=$(basename "$APPFILE")
 
 target=${1:?First arg is target}; shift
 
-if ! [ -e $APPDIR/.config.in.$target ]; then
+if ! [ -e $APPDIR/config.in.$target ]; then
 	echo "Config file $APPDIR/config.in.$target does not exist!"
+	exit
 fi
 
-if ! [ $APPDIR/.config.in -ot .config ] || ! [ $APPDIR/.config.in.$target -ot .config ]; then
+if [ "$(cat .config | sort -u | wc)" != "$(cat .config $APPDIR/config.in $APPDIR/config.in.$target | sort -u | wc)" ]; then
+	echo "Regenerating config from scratch for $target..."
 	cat $APPDIR/config.in $APPDIR/config.in.$target >.config
 	make defconfig
 fi
