@@ -15,9 +15,11 @@ if ! [ -e $APPDIR/config.in.$target ]; then
 	exit
 fi
 
-if [ "$(cat .config | sort -u | wc)" != "$(cat .config $APPDIR/config.in $APPDIR/config.in.$target | sort -u | wc)" ]; then
+if [ "$(grep -v -E '^#' $APPDIR/config.out | sort -u | wc)" != "$(grep -h -v -E '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u | wc)" ]; then
 	echo "Regenerating config from scratch for $target..."
-	cat $APPDIR/config.in $APPDIR/config.in.$target >.config
+	diff -u <(grep -v -E '^#' $APPDIR/config.out | sort -u) <(grep -h -v -E '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u) || :
+	cat $APPDIR/config.in $APPDIR/config.in.$target >$APPDIR/config.out
+	cat $APPDIR/config.out >$APPDIR/.config
 	make defconfig
 fi
 make "$@"
