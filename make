@@ -13,10 +13,8 @@ if [ "$target" != "$(cd env; git rev-parse --abbrev-ref HEAD)" ]; then
 	./scripts/env switch $target
 fi
 
-if [ "$1" == init-config ]; then
-	shift
+if ! [ $APPDIR/.config.in -ot .config ]; then
 	cat $APPDIR/.config.in >.config
 	make defconfig
 fi
-
 make "$@"
