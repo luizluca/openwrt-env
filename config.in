@@ -176,3 +176,6 @@ CONFIG_PACKAGE_hplip-sane=m
 
 # mwan3
 CONFIG_PACKAGE_mwan3=m
+
+# switchdev_poller
+CONFIG_PACKAGE_switchdev_poller=m
