@@ -8,18 +8,30 @@ APPFILE=$(readlink -f "$(which $0)")
 APPDIR=$(dirname "$APPFILE")
 APPNAME=$(basename "$APPFILE")
 
-target=${1:?First arg is target}; shift
+target=${1:?First arg is target or all}; shift
 
-if ! [ -e $APPDIR/config.in.$target ]; then
-	echo "Config file $APPDIR/config.in.$target does not exist!"
+if [ "$target" = "all" ]; then
+	for conffile in $APPDIR/config.in.*; do
+		target=${conffile#*/config.in.}
+		$APPFILE $target "$@"
+	done
 	exit
 fi
 
-if [ "$(grep -v -E '^#' $APPDIR/config.out | sort -u | wc)" != "$(grep -h -v -E '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u | wc)" ]; then
-	echo "Regenerating config from scratch for $target..."
-	diff -u <(grep -v -E '^#' $APPDIR/config.out | sort -u) <(grep -h -v -E '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u) || :
+if ! [ -e $APPDIR/config.in.$target ]; then
+	echo "Config file $APPDIR/config.in.$target does not exist!" >&2
+	exit 2
+fi
+
+conf_old="$(grep --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out | sort -u)" || :
+conf_new="$(grep --no-filename --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u)" || :
+if [ "$(wc <<<"$conf_old")" != "$(wc <<<"$conf_new")" ]; then
+	echo "Regenerating config from scratch for $target..." >&2
+	diff -u <(echo "$conf_old") <(echo "$conf_new") || :
 	cat $APPDIR/config.in $APPDIR/config.in.$target >$APPDIR/config.out
 	cat $APPDIR/config.out >$APPDIR/.config
 	make defconfig
 fi
+echo "Make starting for $target at $(date)" >&2
 make "$@"
+echo "Make finished for $target at $(date)" >&2
