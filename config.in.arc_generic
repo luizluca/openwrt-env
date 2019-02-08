@@ -1,0 +1,6 @@
+#
+# arc770
+#
+CONFIG_TARGET_arc770=y
+CONFIG_TARGET_arc770_generic=y
+CONFIG_TARGET_arc770_generic_Default=y

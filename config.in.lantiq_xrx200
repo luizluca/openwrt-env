@@ -1,0 +1,6 @@
+#
+# lantiq
+#
+CONFIG_TARGET_lantiq=y
+CONFIG_TARGET_lantiq_xrx200=y
+CONFIG_TARGET_lantiq_xrx200_DEVICE_tplink_tdw8980=y
