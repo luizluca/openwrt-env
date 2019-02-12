@@ -10,10 +10,17 @@ APPNAME=$(basename "$APPFILE")
 
 target=${1:?First arg is target or all}; shift
 
-if [ "$target" = "all" ]; then
+if [ "$target" = list ]; then
 	for conffile in $APPDIR/config.in.*; do
 		target=${conffile#*/config.in.}
-		$APPFILE $target "$@"
+		echo $target
+	done
+	exit
+fi
+
+if [ "$target" = "all" ]; then
+	for target in $($APPFILE list); do
+		$APPFILE $target "$@" || exit
 	done
 	exit
 fi
