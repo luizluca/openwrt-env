@@ -30,6 +30,17 @@ if ! [ -e $APPDIR/config.in.$target ]; then
 	exit 2
 fi
 
+if [ ! -e .config ]; then
+	echo -n "Creating symlink "
+	ln -vs $APPDIR/.config .config
+fi
+conf_real=$(readlink -f ".config")
+
+if [ "$conf_real" != "$APPDIR/.config" ]; then
+	echo ".config is not a symlink to '$APPDIR/.config'"
+	exit 1
+fi
+
 conf_old="$(grep --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out | sort -u)" || :
 conf_new="$(grep --no-filename --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u)" || :
 if [ "$(wc <<<"$conf_old")" != "$(wc <<<"$conf_new")" ]; then
