@@ -115,4 +115,8 @@ CONFIG_PACKAGE_hplip-sane=m
 CONFIG_PACKAGE_mwan3=m
 
 # switchdev_poller
-CONFIG_PACKAGE_switchdev_poller=m
+CONFIG_PACKAGE_switchdev-poller=m
+
+# libvpx
+CONFIG_PACKAGE_libvpx=m
+CONFIG_PACKAGE_gst1-mod-vpx=m
