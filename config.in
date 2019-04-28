@@ -119,4 +119,5 @@ CONFIG_PACKAGE_switchdev-poller=m
 
 # libvpx
 CONFIG_PACKAGE_libvpx=m
+CONFIG_PACKAGE_gstreamer1-plugins-good=m
 CONFIG_PACKAGE_gst1-mod-vpx=m
