@@ -98,6 +98,7 @@ CONFIG_PACKAGE_ruby-dev=m
 
 # elfutils
 CONFIG_PACKAGE_libelf1=m
+CONFIG_PACKAGE_libelf=m
 
 # easy-rsa
 CONFIG_PACKAGE_openvpn-easy-rsa=m
