@@ -10,32 +10,30 @@ APPNAME=$(basename "$APPFILE")
 
 target=${1:?First arg is target or all}; shift
 
-if [ "$target" = list ]; then
-	for conffile in $APPDIR/config.in.*; do
-		target=${conffile#*/config.in.}
-		echo $target
-	done
-	exit
-fi
+case "$target" in
+	list)
+		for conffile in $APPDIR/config.in.*; do
+			target=${conffile#*/config.in.}
+			echo $target
+		done
+		exit;;
+	list,)
+		bash -$- $APPFILE list | xargs | tr ' ' ',';
+		exit;;
+	listarch)
+		for target in $(bash -$- $APPFILE list); do
+			bash -$- $APPFILE $target defconfig &>/dev/null || exit
+			echo $target$'\t'$(sed -nre '/^CONFIG_TARGET_ARCH_PACKAGES=/{s/.*="//;s/"//;p}' $APPDIR/.config)
+		done | sort -u
+		exit;;
+	all) 		target=$(bash -$- $APPFILE list,);;
+	allarchs)	target=$(bash -$- $APPFILE listarchs | awk -F'\t' '{ T[$2]=$1 } END { for (t in T) print T[t] }' | sort | xargs | tr ' ' ',');;
+esac
 
-if [ "$target" = listarch ]; then
-	for target in $($APPFILE list); do
-		$APPFILE $target defconfig &>/dev/null || exit
-		echo $target$'\t'$(sed -nre '/^CONFIG_TARGET_ARCH_PACKAGES=/{s/.*="//;s/"//;p}' $APPDIR/.config)
-	done | sort -u
-	exit
-fi
-
-if [ "$target" = "all" ]; then
-	for target in $($APPFILE list); do
-		$APPFILE $target "$@" || exit
-	done
-	exit
-fi
-
-if [ "$target" = "allarchs" ]; then
-	for target in $($APPFILE listarchs | awk -F'\t' '{ T[$2]=$1 } END { for (t in T) print T[t] }' | sort); do
-		$APPFILE $target "$@" || exit
+IFS=',' read -r -a target <<<"$target"
+if [ "${#target[@]}" -gt 1 ]; then
+	for target in ${target[@]}; do
+		bash -$- $APPFILE $target "$@" || exit
 	done
 	exit
 fi
