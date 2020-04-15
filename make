@@ -43,29 +43,21 @@ if ! [ -e $APPDIR/config.in.$target ]; then
 	exit 2
 fi
 
-if [ ! -e $APPDIR/.config ]; then
-	echo "'$APPDIR/.config' is missing. Cleaning '$APPDIR/config.out' as well" >&2
-	echo -n > $APPDIR/config.out
+if [ ! -e "key-build" ]; then
+       echo "key-build is missing'" >&2
+       exit 1
 fi
+version_id=$(md5sum key-build| cut -f1 -d' ')
+#conf_real=$(readlink -f ".config")
+conf_real=".config"
 
-if [ ! -e .config ]; then
-	echo -n "Creating symlink " >&2
-	ln -vnfs $APPDIR/.config .config
-fi
-conf_real=$(readlink -f ".config")
-
-if [ "$conf_real" != "$APPDIR/.config" ]; then
-	echo ".config is not a symlink to '$APPDIR/.config'"
-	exit 1
-fi
-
-conf_old="$(grep --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out | sort -u)" || :
-conf_new="$(grep --no-filename --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out $APPDIR/config.in $APPDIR/config.in.$target | sort -u)" || :
+conf_old="$(grep --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out-$version_id | sort -u)" || :
+conf_new="$(grep --no-filename --no-messages --invert-match --extended-regexp '^#' $APPDIR/config.out-$version_id $APPDIR/config.in $APPDIR/config.in.$target | sort -u)" || :
 if [ "$(wc <<<"$conf_old")" != "$(wc <<<"$conf_new")" ]; then
 	echo "Regenerating config from scratch for $target..." >&2
 	diff --unchanged-line-format='' --new-line-format="+%L"  <(echo "$conf_old") <(echo "$conf_new") >&2 || :
-	cat $APPDIR/config.in $APPDIR/config.in.$target >$APPDIR/config.out
-	cat $APPDIR/config.out >$APPDIR/.config
+	cat $APPDIR/config.in $APPDIR/config.in.$target >$APPDIR/config.out-$version_id
+	cat $APPDIR/config.out-$version_id >"$conf_real"
 	echo "make defconfig" >&2
 	make defconfig
 	echo "make defconfig done" >&2
