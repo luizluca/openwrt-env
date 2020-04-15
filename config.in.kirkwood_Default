@@ -1,6 +1,0 @@
-#
-# kirkwood
-#
-CONFIG_TARGET_kirkwood=y
-CONFIG_TARGET_kirkwood_Default=y
-CONFIG_TARGET_kirkwood_DEVICE_linksys_viper=y
