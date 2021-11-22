@@ -4,3 +4,5 @@
 CONFIG_TARGET_ramips=y
 CONFIG_TARGET_ramips_mt7620=y
 CONFIG_TARGET_ramips_mt7620_DEVICE_tplink_archer-c5-v4=y
+# Força ao menos 1 para nao gerar todos
+#CONFIG_TARGET_ramips_mt7620_DEVICE_tplink_archer-c50-v1=y
