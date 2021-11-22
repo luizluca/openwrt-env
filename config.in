@@ -2,6 +2,9 @@
 # Common config
 #
 
+CONFIG_DEVEL=y
+CONFIG_CCACHE=y
+
 # sane-backends
 CONFIG_PACKAGE_sane-backends=m
 CONFIG_PACKAGE_sane-backends-all=m
@@ -125,6 +128,9 @@ CONFIG_PACKAGE_gst1-mod-vpx=m
 
 # conntrackmon
 CONFIG_PACKAGE_conntrackmon=m
+
+# neighbormon
+CONFIG_PACKAGE_neighbormon=m
 
 # gbdserver
 CONFIG_PACKAGE_zlib=y
