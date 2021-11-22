@@ -1,2 +1,2 @@
-gst1-plugins-good
+ruby sane-backends gst1-plugins-good libvpx hplip conntrackmon neighbormon
 
